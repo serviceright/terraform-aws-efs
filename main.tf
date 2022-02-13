@@ -36,7 +36,8 @@ resource "aws_efs_file_system" "default" {
 }
 
 resource "aws_efs_file_system_policy" "default" {
-  file_system_id = aws_efs_file_system.default.id
+  count = local.enabled ? 1 : 0
+  file_system_id = aws_efs_file_system.default[0].id
 
   bypass_policy_lockout_safety_check = true
 
@@ -54,7 +55,7 @@ resource "aws_efs_file_system_policy" "default" {
                 "elasticfilesystem:ClientWrite",
                 "elasticfilesystem:ClientMount"
             ],
-            "Resource": "${aws_efs_file_system.default.arn}",
+            "Resource": "${aws_efs_file_system.default[0].arn}",
             "Condition": {
                 "Bool": {
                     "elasticfilesystem:AccessedViaMountTarget": "true"
@@ -67,7 +68,7 @@ resource "aws_efs_file_system_policy" "default" {
                 "AWS": "*"
             },
             "Action": "*",
-            "Resource": "${aws_efs_file_system.default.arn}",
+            "Resource": "${aws_efs_file_system.default[0].arn}",
             "Condition": {
                 "Bool": {
                     "aws:SecureTransport": "false"
