@@ -35,6 +35,50 @@ resource "aws_efs_file_system" "default" {
   }
 }
 
+resource "aws_efs_file_system_policy" "default" {
+  file_system_id = aws_efs_file_system.default.id
+
+  bypass_policy_lockout_safety_check = true
+
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": [
+                "elasticfilesystem:ClientRootAccess",
+                "elasticfilesystem:ClientWrite",
+                "elasticfilesystem:ClientMount"
+            ],
+            "Resource": "${aws_efs_file_system.default.arn}",
+            "Condition": {
+                "Bool": {
+                    "elasticfilesystem:AccessedViaMountTarget": "true"
+                }
+            }
+        },
+        {
+            "Effect": "Deny",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "*",
+            "Resource": "${aws_efs_file_system.default.arn}",
+            "Condition": {
+                "Bool": {
+                    "aws:SecureTransport": "false"
+                }
+            }
+        }
+    ]
+}
+POLICY
+}
+
 resource "aws_efs_mount_target" "default" {
   count          = local.enabled && length(var.subnets) > 0 ? length(var.subnets) : 0
   file_system_id = join("", aws_efs_file_system.default.*.id)
