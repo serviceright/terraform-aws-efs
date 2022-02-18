@@ -47,18 +47,3 @@ output "network_interface_ids" {
   value       = coalescelist(aws_efs_mount_target.default.*.network_interface_id, [""])
   description = "List of mount target network interface IDs"
 }
-
-output "security_group_id" {
-  value       = module.security_group.id
-  description = "EFS Security Group ID"
-}
-
-output "security_group_arn" {
-  value       = module.security_group.arn
-  description = "EFS Security Group ARN"
-}
-
-output "security_group_name" {
-  value       = module.security_group.name
-  description = "EFS Security Group name"
-}

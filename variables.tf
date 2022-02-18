@@ -18,6 +18,11 @@ variable "access_points" {
     EOT
 }
 
+variable "security_groups" {
+  type        = list(string)
+  default     = []
+}
+
 variable "vpc_id" {
   type        = string
   description = "VPC ID"
