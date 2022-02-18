@@ -85,7 +85,7 @@ resource "aws_efs_mount_target" "default" {
   file_system_id = join("", aws_efs_file_system.default.*.id)
   ip_address     = var.mount_target_ip_address
   subnet_id      = var.subnets[count.index]
-  security_groups = [var.security_groups]
+  security_groups = var.security_groups
 }
 
 resource "aws_efs_access_point" "default" {
